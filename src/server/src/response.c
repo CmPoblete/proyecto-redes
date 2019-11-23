@@ -100,7 +100,23 @@ int get_game_winner(PlayersInfo *players, int *winners)
   return n_winners;
 }
 
-void reset_score_and_remaining(PlayersInfo *players)
+int get_game_winner_by_disconnect(PlayersInfo* players, int* winners, int my_attention)
+{
+  int n_winners = 0;
+  for(int i = 0; i < players->connected; i++)
+  {
+    printf("%d != %d => %d\n", i, my_attention, i != my_attention);
+    if(i != my_attention)
+    {
+      winners[n_winners] = i;
+      n_winners ++;
+    }
+  }
+  return n_winners;
+}
+
+
+void reset_score_and_remaining(PlayersInfo* players)
 {
   for (int i = 0; i < players->connected; i++)
   {
@@ -249,6 +265,7 @@ void handle_message(PlayersInfo *players_info, int my_attention, int msg_code)
         n_game_winners = get_game_winner(players_info, game_winners);
         server_send_end_game(players_info, games);
         server_send_game_winner(players_info, game_winners, n_game_winners);
+        server_send_all_image(players_info, game_winners, n_game_winners);
         reset_wins(players_info);
         games++;
         server_ask_new_game(players_info);
@@ -296,6 +313,19 @@ void handle_message(PlayersInfo *players_info, int my_attention, int msg_code)
   else if (msg_code == 17)
   {
     /* Disconnect */
+    printf("A client is asking for disconect\n");
+    int game_winners[10];
+    int n_game_winners = 0;
+    n_game_winners = get_game_winner_by_disconnect(players_info, game_winners, my_attention);
+    for (int i = 0; i < n_game_winners; i++)
+    {
+      printf("ganador %d es %d\n", i, game_winners[i]);
+    }
+    
+    server_send_game_winner(players_info, game_winners, n_game_winners);
+    server_send_all_image(players_info, game_winners, n_game_winners);
+    server_send_disconect(players_info);
+    end_games = 1;
   }
   else if (msg_code == 20)
   {

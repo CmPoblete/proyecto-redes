@@ -1,8 +1,8 @@
 #include "globals.h"
 
 
-int MAX_CONNECTIONS = 3;
-int MAX_TIME_WAIT_CONNECTIONS = 10; /* En segundos */
+int MAX_CONNECTIONS = 10;
+int MAX_TIME_WAIT_CONNECTIONS = 3; /* En segundos */
 
 
 unsigned char* cards;

@@ -134,7 +134,8 @@ int load_input(uint8_t *log, int *port, char **ip, int argc, char *argv[])
 int main(int argc, char *argv[])
 {
   char nickname[50];
-  char answer_word[21];
+
+  //char answer_word[21];
   DEBUGGER = 1;
   char *IP;
   int PORT;
@@ -159,11 +160,13 @@ int main(int argc, char *argv[])
 
   int start = connect_to_server(IP, PORT);
 
-  while (start)
-  {
-    int msg_code = client_receive_id(server_socket);
-    if (msg_code == 2)
-    {
+  int msg_code;
+  while (start){
+    msg_code = client_receive_id(server_socket);
+    // printf("msg_code: %d \n", msg_code);
+    
+    if (msg_code == 2) {
+
       client_payload_len(server_socket);
       printf("Conection established\n");
 
@@ -198,9 +201,11 @@ int main(int argc, char *argv[])
     else if (msg_code == 9)
     {
       print_cards(server_socket);
-      printf("\nWhich word is repeated?: ");
-      scanf("%s", answer_word);
-      client_send_obj_word(server_socket, answer_word);
+      game_turn(server_socket);
+      
+      // printf("\nWhich word is repeated?: ");
+      // scanf("%s", answer_word);
+      // client_send_obj_word(server_socket, answer_word);
     }
 
     else if (msg_code == 8)
@@ -241,6 +246,12 @@ int main(int argc, char *argv[])
       printf("Disconected\n");
       break;
     }
+    else if(msg_code == 64)
+    {
+      char* buff;
+      client_recive_image(server_socket, buff);
+    }
+    
     else if (msg_code == 20)
     {
       client_resend();

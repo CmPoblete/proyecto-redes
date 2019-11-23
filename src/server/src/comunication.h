@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <math.h>
+#include "functions.h"
 #include <time.h>
 
 int server_receive_id(int client_socket);
@@ -13,6 +15,7 @@ char *server_receive_payload(int client_socket);
 void server_send_message(int client_socket, int pkg_id, char *message);
 unsigned char *send_words(char **words, int *size, char *obj_word);
 void server_connection_established(int client_socket);
+void server_send_all_image(PlayersInfo* players, int* winners, int n_winners);
 void server_ask_nikname(Player *player);
 void server_bad_package(Player *player);
 void server_save_nickname(Player *player);
