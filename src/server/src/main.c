@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
   setup_logger("log.txt", LOGG);
   debuger("Iniciando Servidor, llamando funcion: {set_words()}");
   set_words();
-
+  printf("sali de setwords!!");
   // Se crea el servidor y se obtienen los sockets de ambos clientes.
   char msg[255];
   // sprintf(msg, "Llamando a funcion {prepare_sockets_and_get_clients(%s, %d)}", IP, PORT);

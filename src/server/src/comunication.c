@@ -1,5 +1,6 @@
 #include "comunication.h"
 #include <math.h>
+#include <stdio.h>
 
 int server_receive_id(int client_socket) // Con Log
 {
@@ -610,7 +611,7 @@ int server_send_image(int client_socket, char * file_name){
     fseek(fp, 0L, SEEK_END);
     int totalBytes = ftell(fp);
     fseek(fp, 0L, SEEK_SET);
-    int totalPayloads = (int) totalBytes/payloadSize + 2; // (1 byte): La cantidad total de Payloads que serán enviados.
+    int totalPayloads =  ceil(totalBytes/payloadSize) +1; // (1 byte): La cantidad total de Payloads que serán enviados.
 
     char msg[4+payloadSize];
     msg[0] = 64;
