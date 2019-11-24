@@ -155,17 +155,19 @@ int main(int argc, char *argv[])
     }
   }
   setup_logger("log.txt", LOGG);
-  debuger("Iniciando Cliente, llamando funcion: {connect_to_server(%s, %d)}", IP, PORT);
+  //debuger("Iniciando Cliente, llamando funcion: {connect_to_server(%s, %d)}", IP, PORT);
   // Se prepara el socket
 
   int start = connect_to_server(IP, PORT);
 
   int msg_code;
-  while (start){
+  while (start)
+  {
     msg_code = client_receive_id(server_socket);
     // printf("msg_code: %d \n", msg_code);
-    
-    if (msg_code == 2) {
+
+    if (msg_code == 2)
+    {
 
       client_payload_len(server_socket);
       printf("Conection established\n");
@@ -202,7 +204,7 @@ int main(int argc, char *argv[])
     {
       print_cards(server_socket);
       game_turn(server_socket);
-      
+
       // printf("\nWhich word is repeated?: ");
       // scanf("%s", answer_word);
       // client_send_obj_word(server_socket, answer_word);
@@ -246,12 +248,12 @@ int main(int argc, char *argv[])
       printf("Disconected\n");
       break;
     }
-    else if(msg_code == 64)
+    else if (msg_code == 64)
     {
-      char* buff;
+      char *buff;
       client_recive_image(server_socket, buff);
     }
-    
+
     else if (msg_code == 20)
     {
       client_resend();

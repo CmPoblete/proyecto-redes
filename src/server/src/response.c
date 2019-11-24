@@ -321,7 +321,7 @@ void handle_message(PlayersInfo *players_info, int my_attention, int msg_code)
     {
       printf("ganador %d es %d\n", i, game_winners[i]);
     }
-    
+
     server_send_game_winner(players_info, game_winners, n_game_winners);
     server_send_all_image(players_info, game_winners, n_game_winners);
     server_send_disconect(players_info);
@@ -344,6 +344,6 @@ void handle_message(PlayersInfo *players_info, int my_attention, int msg_code)
   else
   {
     char *err = "Bad Package ERROR: Wrong ID";
-    server_bad_package(players_info->players[my_attention], err);
+    server_bad_package(players_info->players[my_attention]);
   }
 }

@@ -115,9 +115,8 @@ int main(int argc, char *argv[])
 
   // Se crea el servidor y se obtienen los sockets de ambos clientes.
   char msg[255];
-  sprintf(msg, "Llamando a funcion {prepare_sockets_and_get_clients(%s, %d)}", IP, PORT);
-  debuger(msg);
-  free(msg);
+  // sprintf(msg, "Llamando a funcion {prepare_sockets_and_get_clients(%s, %d)}", IP, PORT);
+  // debuger(msg);
   PlayersInfo *players_info = prepare_sockets_and_get_clients(IP, PORT);
 
   // Le enviamos al primer cliente un mensaje de bienvenida
@@ -130,10 +129,8 @@ int main(int argc, char *argv[])
     int msg_code = server_receive_id(players_info->players[my_attention]->socket);
     if (msg_code)
     {
-      char msg[255];
       sprintf(msg, "%s::Received message ID=%d", __func__, msg_code);
       infolog(msg);
-      free(msg);
       handle_message(players_info, my_attention, msg_code);
     }
     if (my_attention + 1 < players_info->connected)
@@ -144,10 +141,8 @@ int main(int argc, char *argv[])
     if (end_games)
       break;
   }
-  char msg[255];
   sprintf(msg, "Destroying Players:\n%s\n%s\n", players_info->players[0]->nickname, players_info->players[1]->nickname);
   debuger(msg);
-  free(msg);
   destroy_players_info(players_info);
   debuger("Liberando Cards");
   free(cards);

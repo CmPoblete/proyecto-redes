@@ -6,7 +6,6 @@
 #include <time.h>
 #include <math.h>
 
-#define NAME_SIZE 65
 #define MESG_SIZE 512
 
 extern FILE *LOGGER;
@@ -15,7 +14,8 @@ extern int INFO;
 extern int WARNING;
 extern int ERROR;
 extern int CRITIC;
-extern const char *MESAGE_NAMES[NAME_SIZE];
+
+char *MSG_NAMES(int NAME_SIZE);
 
 void setup_logger(char *fp, int op);
 void debuger(char *msg);

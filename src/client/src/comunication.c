@@ -1,7 +1,7 @@
 #include "comunication.h"
 #include "logs.h"
 
-extern char **LAST_PACK_SENT;
+extern char **LAST_PACK_SENT=NULL;
 
 int client_receive_id(int client_socket)
 {
@@ -11,7 +11,6 @@ int client_receive_id(int client_socket)
   char msg[255];
   sprintf(msg, "%s::Received message ID=%d", __func__, id);
   infolog(msg);
-  free(msg);
   return id;
 }
 
@@ -22,7 +21,6 @@ int client_payload_len(int client_socket)
   char msg[255];
   sprintf(msg, "%s::Received Size. Bytes IN: 1", __func__);
   infolog(msg);
-  free(msg);
   return len;
 }
 
@@ -34,14 +32,11 @@ unsigned char *client_receive_payload(int client_socket)
   char msg[255];
   sprintf(msg, "%s::Received Size. Bytes IN: %d", __func__, len);
   infolog(msg);
-  free(msg);
   // Se obtiene el payload
   unsigned char *payload = calloc(len, 1);
   int received = recv(client_socket, payload, len, 0);
-  char msg[255];
   sprintf(msg, "%s::Received Size. Bytes IN: %d", __func__, received);
   infolog(msg);
-  free(msg);
   return payload;
 }
 
@@ -58,13 +53,12 @@ void client_send_message(int client_socket, int pkg_id, char *message)
   // Se envía el paquete
   send(client_socket, msg, 2 + payloadSize, 0);
   char msg0[255 + 6 * msg[1]];
-  sprintf(msg0, "%s::Sent Package %s. Bytes OUT: {ID=%d}{Size=%d}{Payload= ", __func__, MSG_NAMES[msg[0]], msg[0], msg[1]);
+  sprintf(msg0, "%s::Sent Package %s. Bytes OUT: {ID=%d}{Size=%d}{Payload= ", __func__, MESAGE_NAMES(msg[0]), msg[0], msg[1]);
   for (int i = 0; i < msg[1]; i++)
     sprintf(msg0, "%#x ", msg[2 + i]);
   sprintf(msg0, "}");
   infolog(msg0);
-  free(msg0);
-  *LAST_PACK_SENT = &msg;
+  *LAST_PACK_SENT = msg;
 }
 
 void client_start_conection(int client_socket)
@@ -76,9 +70,9 @@ void client_start_conection(int client_socket)
   // Se envía el paquete
   send(client_socket, msg, 2, 0);
   char msg0[255 + 6 * msg[1]];
-  sprintf(msg0, "%s::Sent Package %s. Bytes OUT: {ID=%d}{Size=%d}{Payload= ", __func__, MSG_NAMES[msg[0]], msg[0], msg[1]);
+  sprintf(msg0, "%s::Sent Package %s. Bytes OUT: {ID=%d}{Size=%d}{Payload= ", __func__, MESAGE_NAMES(msg[0]), msg[0], msg[1]);
   infolog(msg0);
-  *LAST_PACK_SENT = &msg;
+  *LAST_PACK_SENT = msg;
 }
 
 void print_one_word(char *word, int size, int pos)
@@ -178,13 +172,13 @@ void client_send_nickname(int server_socket, char *nickname)
 
   send(server_socket, msg, 2 + payloadSize, 0);
   char msg0[255 + 6 * msg[1]];
-  sprintf(msg0, "%s::Sent Package %s. Bytes OUT: {ID=%d}{Size=%d}{Payload= ", __func__, MSG_NAMES[msg[0]], msg[0], msg[1]);
+  sprintf(msg0, "%s::Sent Package %s. Bytes OUT: {ID=%d}{Size=%d}{Payload= ", __func__, MESAGE_NAMES(msg[0]), msg[0], msg[1]);
   for (int i = 0; i < msg[1]; i++)
     sprintf(msg0, "%#x ", msg[2 + i]);
   sprintf(msg0, "}");
   infolog(msg0);
-  free(msg0);
-  *LAST_PACK_SENT = &msg;
+
+  *LAST_PACK_SENT = msg;
 }
 
 void print_scores(int client_socket)
@@ -194,14 +188,13 @@ void print_scores(int client_socket)
   char msg[255];
   sprintf(msg, "%s::Received Size. Bytes IN: %d", __func__, len);
   infolog(msg);
-  free(msg);
+
   // Se obtiene el payload
   unsigned char *payload = calloc(len, 1);
   int received = recv(client_socket, payload, len, 0);
-  char msg[255];
   sprintf(msg, "%s::Received Scores. Bytes IN: %d - %d", __func__, payload[0], payload[1]);
   infolog(msg);
-  free(msg);
+
   printf("\n My score: %d", payload[0]);
   printf("\n Oponent(s) score: ");
   for (int i = 1; i < len; i++)
@@ -218,14 +211,13 @@ int client_recieve_myid(int client_socket)
   char msg[255];
   sprintf(msg, "%s::Received Size. Bytes IN: %d", __func__, len);
   infolog(msg);
-  free(msg);
+
   // Se obtiene el payload
   int id = 0;
   recv(client_socket, &id, 1, 0);
-  char msg[255];
   sprintf(msg, "%s::Received client ID=%d", __func__, id);
   infolog(msg);
-  free(msg);
+
   return id;
 }
 
@@ -240,13 +232,13 @@ void client_send_obj_word(int server_socket, char *word)
 
   send(server_socket, msg, 2 + payloadSize, 0);
   char msg0[255 + 6 * msg[1]];
-  sprintf(msg0, "%s::Sent Package %s. Bytes OUT: {ID=%d}{Size=%d}{Payload= ", __func__, MSG_NAMES[msg[0]], msg[0], msg[1]);
+  sprintf(msg0, "%s::Sent Package %s. Bytes OUT: {ID=%d}{Size=%d}{Payload= ", __func__, MESAGE_NAMES(msg[0]), msg[0], msg[1]);
   for (int i = 0; i < msg[1]; i++)
     sprintf(msg0, "%#x ", msg[2 + i]);
   sprintf(msg0, "}");
   infolog(msg0);
-  free(msg0);
-  *LAST_PACK_SENT = &msg;
+
+  *LAST_PACK_SENT = msg;
 }
 
 void recieve_correct_answer(int client_socket)
@@ -258,18 +250,13 @@ void recieve_correct_answer(int client_socket)
   char msg[255];
   sprintf(msg, "%s::Received Size. Bytes IN: %d", __func__, len);
   infolog(msg);
-  free(msg);
   // Se obtiene el payload
   recv(client_socket, &correct, 1, 0);
-  char msg[255];
   sprintf(msg, "%s::Received Correct. Bytes IN: %d", __func__, correct);
   infolog(msg);
-  free(msg);
   recv(client_socket, &intentos, 1, 0);
-  char msg[255];
   sprintf(msg, "%s::Received Intentos. Bytes IN: %d", __func__, intentos);
   infolog(msg);
-  free(msg);
   if (correct)
     printf("The answer is correct!!\n");
   else
@@ -283,7 +270,7 @@ void client_recieve_round_winners(int client_socket, int myId)
   char msg[255];
   sprintf(msg, "%s::Received Size. Bytes IN: %d", __func__, len);
   infolog(msg);
-  free(msg);
+
   // Se obtiene el payload
   unsigned int *payload = calloc(10, sizeof(unsigned int));
   for (int i = 0; i < len; i++)
@@ -318,14 +305,13 @@ void client_recive_end_game(int client_socket)
   char msg[255];
   sprintf(msg, "%s::Received message size=%d", __func__, len);
   infolog(msg);
-  free(msg);
+
   // Se obtiene el payload
   int game = 0;
   recv(client_socket, &game, 1, 0);
-  char msg[255];
   sprintf(msg, "%s::Received message Payload=%d", __func__, game);
   infolog(msg);
-  free(msg);
+
   printf("Game n°%d has ended\n", game);
 }
 
@@ -336,7 +322,7 @@ void client_recive_game_winner(int client_socket, int myId)
   char msg[255];
   sprintf(msg, "%s::Received Size. Bytes IN: %d", __func__, len);
   infolog(msg);
-  free(msg);
+
   // Se obtiene el payload
   unsigned int *winners = calloc(len, sizeof(unsigned int));
   recv(client_socket, winners, len, 0);
@@ -364,13 +350,13 @@ void client_response_new_game(int server_socket, int answer)
 
   send(server_socket, msg, 3, 0);
   char msg0[255 + 6 * msg[1]];
-  sprintf(msg0, "%s::Sent Package %s. Bytes OUT: {ID=%d}{Size=%d}{Payload= ", __func__, MSG_NAMES[msg[0]], msg[0], msg[1]);
+  sprintf(msg0, "%s::Sent Package %s. Bytes OUT: {ID=%d}{Size=%d}{Payload= ", __func__, MESAGE_NAMES(msg[0]), msg[0], msg[1]);
   for (int i = 0; i < msg[1]; i++)
     sprintf(msg0, "%#x ", msg[2 + i]);
   sprintf(msg0, "}");
   infolog(msg0);
-  free(msg0);
-  *LAST_PACK_SENT = &msg;
+
+  *LAST_PACK_SENT = msg;
 }
 
 void client_get_game(int server_socket)
@@ -380,13 +366,12 @@ void client_get_game(int server_socket)
   char msg[255];
   sprintf(msg, "%s::Received Size. Bytes IN: %d", __func__, len);
   infolog(msg);
-  free(msg);
+
   int game_number = 0;
   recv(server_socket, &game_number, 1, 0);
-  char msg[255];
   sprintf(msg, "%s::Received Game number. Bytes IN: %d", __func__, game_number);
   infolog(msg);
-  free(msg);
+
   printf("Starting game N°%d\n", game_number);
 }
 
@@ -397,13 +382,12 @@ void print_oponent_found(int server_socket)
   char msg[255];
   sprintf(msg, "%s::Received Size. Bytes IN: %d", __func__, len);
   infolog(msg);
-  free(msg);
+
   char *oponents = calloc(len, 1);
   recv(server_socket, oponents, len, 0);
-  char msg[255];
   sprintf(msg, "%s::Received Oponents. Bytes IN: %s", __func__, oponents);
   infolog(msg);
-  free(msg);
+
   printf("Oponent(s) found:");
   for (int i = 0; i < len; i++)
   {
@@ -413,19 +397,17 @@ void print_oponent_found(int server_socket)
   free(oponents);
 }
 
-
-
 void client_send_disconect(int server_socket)
 {
-    // unsigned char* msg = calloc(2, 1);
-    char msg[3];
-    msg[0] = 17;
-    msg[1] = 0;
-    send(server_socket, msg, 2, 0);
-    // free(msg);
+  // unsigned char* msg = calloc(2, 1);
+  char msg[3];
+  msg[0] = 17;
+  msg[1] = 0;
+  send(server_socket, msg, 2, 0);
 }
 
-int game_turn(int server_socket){
+int game_turn(int server_socket)
+{
   char doing[10];
   char answer_word[21];
   printf("Menu:\n");
@@ -433,14 +415,14 @@ int game_turn(int server_socket){
   printf("2: Disconect\n");
   printf("What do you want to do: ");
   scanf("%s", doing);
-  if(!strcmp(doing, "1"))
+  if (!strcmp(doing, "1"))
   {
     printf("\nWhich word is repeated?: \n");
     scanf("%s", answer_word);
     client_send_obj_word(server_socket, answer_word);
     return 1;
   }
-  else if(!strcmp(doing, "2"))
+  else if (!strcmp(doing, "2"))
   {
     client_send_disconect(server_socket);
     return 0;
@@ -454,48 +436,54 @@ int game_turn(int server_socket){
 
 int totalbytesreaded = 0;
 
-void client_recive_image(int server_socket, char* buff){
-    int totalPayloads;
-    int currentPayload;
-    unsigned int payloadSize;
-    recv(server_socket, &totalPayloads, 1, 0);
-    recv(server_socket, &currentPayload, 1, 0);
-    recv(server_socket, &payloadSize, 1, 0);
-    if (currentPayload==1){
-      printf("seting buff size %d\n", totalPayloads * payloadSize);
+void client_recive_image(int server_socket, char *buff)
+{
+  int totalPayloads;
+  int currentPayload;
+  unsigned int payloadSize;
+  recv(server_socket, &totalPayloads, 1, 0);
+  recv(server_socket, &currentPayload, 1, 0);
+  recv(server_socket, &payloadSize, 1, 0);
+  if (currentPayload == 1)
+  {
+    printf("seting buff size %d\n", totalPayloads * payloadSize);
     //   buff = calloc(totalPayloads * payloadSize, sizeof(char));
+  }
+
+  char mini_buff[payloadSize];
+  printf("[CLIENT][PKGE IN] sending image segment. TP: %d. CP: %d. PS: %d\n", totalPayloads, currentPayload, payloadSize);
+  int b = recv(server_socket, &mini_buff, payloadSize, 0);
+  printf("b %d totalbytesreaded %d \n", b, totalbytesreaded);
+  totalbytesreaded += b;
+  printf("buff:\n%s\n\n\n", mini_buff);
+  // if (currentPayload == totalPayloads){
+  FILE *fp = fopen("image.txt", "ab");
+  if (fp != NULL)
+  {
+    fwrite(mini_buff, 1, payloadSize, fp);
+    if (b < 0)
+    {
+      perror("Receiving");
     }
+    fclose(fp);
+  }
+  else
+  {
+    perror("File");
+  }
+  printf("End recibing\n");
+}
 
-    char mini_buff[payloadSize];
-    printf("[CLIENT][PKGE IN] sending image segment. TP: %d. CP: %d. PS: %d\n", totalPayloads, currentPayload, payloadSize);
-    int b = recv(server_socket, &mini_buff, payloadSize, 0);
-    printf("b %d totalbytesreaded %d \n", b, totalbytesreaded);
-    totalbytesreaded += b;
-    printf("buff:\n%s\n\n\n", mini_buff);
-    // if (currentPayload == totalPayloads){
-        FILE* fp = fopen( "image.txt", "ab");
-        if(fp != NULL){
-            fwrite(mini_buff, 1, payloadSize, fp);
-            if (b<0){
-                perror("Receiving");
-            }
-        fclose(fp);
-        }
-        else {
-            perror("File");
-        }
-        printf("End recibing\n");
-     }
-
- 
 void client_resend(int server_socket)
 {
-  send(server_socket, LAST_PACK_SENT, LAST_PACK_SENT[1]);
-  char msg0[255 + 6 * LAST_PACK_SENT[1]];
-  sprintf(msg0, "%s::Re-Sent Package %s. Bytes OUT: {ID=%d}{Size=%d}{Payload= ", __func__, MSG_NAMES[LAST_PACK_SENT[0]], LAST_PACK_SENT[0], LAST_PACK_SENT[1]);
-  for (int i = 0; i < LAST_PACK_SENT[1]; i++)
+  send(server_socket, LAST_PACK_SENT, *LAST_PACK_SENT[1], 0);
+  char msg0[255 + 6 * *LAST_PACK_SENT[1]];
+  sprintf(msg0, "%s::Re-Sent Package %s. Bytes OUT: {ID=%d}{Size=%d}{Payload= ", __func__, MESAGE_NAMES(*LAST_PACK_SENT[0]), *LAST_PACK_SENT[0], *LAST_PACK_SENT[1]);
+  for (int i = 0; i < *LAST_PACK_SENT[1]; i++)
+  {
     sprintf(msg0, "%#x ", LAST_PACK_SENT[2 + i]);
+  }
   sprintf(msg0, "}");
   infolog(msg0);
-  free(msg0);
+
 }
